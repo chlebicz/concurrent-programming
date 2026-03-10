@@ -1,3 +1,5 @@
 <Solution>
   <Project Path="View/View.csproj" />
+  <Project Path="Data/Data.csproj" />
+  <Project Path="Logic/Logic.csproj" />
 </Solution>
