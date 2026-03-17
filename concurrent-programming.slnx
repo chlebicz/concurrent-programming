@@ -1,0 +1,8 @@
+<Solution>
+  <Project Path="Data/Data.csproj" />
+  <Project Path="Logic/Logic.csproj" />
+  <Project Path="LogicTest/LogicTest.csproj" Id="a450248e-202d-4b57-a9e9-8d6f22d09a42" />
+  <Project Path="PresentationTest/PresentationTest.csproj" Id="24fc9e71-45eb-40af-bee0-d4a4adc3a51e" />
+  <Project Path="UnitTests/DataTest.csproj" Id="ea75701b-d01f-41a3-a81b-197baede5186" />
+  <Project Path="View/Presentation.csproj" />
+</Solution>
