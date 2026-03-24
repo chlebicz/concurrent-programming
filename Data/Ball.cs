@@ -5,6 +5,7 @@
         private int number;
         private int xPos;
         private int yPos;
+        private static int size = 10;
         
         public Ball(int number, int xPos, int yPos)
         {
@@ -26,6 +27,11 @@
         public int GetYPos()
         {  
             return yPos;
+        }
+
+        public static int GetSize()
+        {
+            return size;
         }
 
         public void SetXPos(int xPos)
