@@ -16,14 +16,14 @@ namespace Logic
             int ballNumber = 0;
             for (int i = 5; i >= 0; --i) // level
             {
-                int yPos = i * Ball.GetSize();
-                int spacing = (5 - i) * Ball.GetSize();
+                int yPos = i * Ball.Size;
+                int spacing = (5 - i) * Ball.Size;
 
                 for (int j = 1; j <= i; ++j)
                 {
-                    int previousBalls = (j - 1) * Ball.GetSize();
+                    int previousBalls = (j - 1) * Ball.Size;
                     ++ballNumber;
-                    balls.Add(new Ball(ballNumber, spacing + previousBalls, yPos));
+                    balls.Add(new Ball(ballNumber, spacing + previousBalls, yPos, 0));
                 }
             }
         }

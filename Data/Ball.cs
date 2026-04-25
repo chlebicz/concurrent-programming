@@ -2,47 +2,18 @@
 {
     public class Ball
     {
-        private int number;
-        private int xPos;
-        private int yPos;
-        private static int size = 10;
+        public int Number { get; }
+        public int X { get; set; }
+        public int Y { get; set; }
+        public static int Size { get; } = 10;
+        public int Direction { get; set; }
         
-        public Ball(int number, int xPos, int yPos)
+        public Ball(int number, int xPos, int yPos, int direction)
         {
-            this.number = number;
-            this.xPos = xPos;
-            this.yPos = yPos;
+            Number = number;
+            X = xPos;
+            Y = yPos;
+            Direction = direction;
         }
-
-        public int GetNumber()
-        {
-            return number;
-        }
-
-        public int GetXPos()
-        {
-            return xPos;
-        }
-
-        public int GetYPos()
-        {  
-            return yPos;
-        }
-
-        public static int GetSize()
-        {
-            return size;
-        }
-
-        public void SetXPos(int xPos)
-        {
-            this.xPos = xPos;
-        }
-
-        public void SetYPos(int yPos)
-        {
-            this.yPos = yPos;
-        }
-
     }
 }

@@ -7,10 +7,11 @@ namespace UnitTests
         [Fact]
         public void CreateBallTest()
         {
-            Ball ball = new Ball(8, 5, 7);
-            Assert.Equal(8, ball.GetNumber());
-            Assert.Equal(5, ball.GetXPos());
-            Assert.Equal(7, ball.GetYPos());
+            Ball ball = new Ball(8, 5, 7, 0);
+            Assert.Equal(8, ball.Number);
+            Assert.Equal(5, ball.X);
+            Assert.Equal(7, ball.Y);
+            Assert.Equal(0, ball.Direction);
         }
     }
 }
