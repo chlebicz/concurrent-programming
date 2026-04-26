@@ -1,17 +1,19 @@
-﻿using System;
+﻿using Data;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Data
+namespace LogicTest
 {
-    public class DataPool : IDataPool
+    internal class FakeDataPool : IDataPool
     {
         public int XDim { get; }
         public int YDim { get; }
+
         private List<IDataBall> balls;
         public IReadOnlyCollection<IDataBall> Balls => balls.AsReadOnly();
 
-        public DataPool(int xDim, int yDim)
+        public FakeDataPool(int xDim, int yDim)
         {
             XDim = xDim;
             YDim = yDim;
