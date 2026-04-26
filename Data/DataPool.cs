@@ -9,6 +9,7 @@ namespace Data
         public int XDim { get; }
         public int YDim { get; }
         private List<IDataBall> balls;
+        public IReadOnlyCollection<IDataBall> Balls => balls.AsReadOnly();
 
         public DataPool(int xDim, int yDim)
         {
