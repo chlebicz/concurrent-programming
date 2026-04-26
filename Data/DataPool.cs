@@ -8,22 +8,22 @@ namespace Data
     {
         public int XDim {  get; }
         public int YDim { get; }
-        public List<Ball> balls;
+        private List<DataBall> balls;
 
 
         public DataPool(int xDim, int yDim)
         {
             XDim = xDim;
             YDim = yDim;
-            balls = new List<Ball>();
+            balls = new List<DataBall>();
         }
 
-        public void AddBall(Ball ball)
+        public void AddBall(DataBall ball)
         {
             this.balls.Add(ball);
         }
 
-        public void RemoveBall(Ball ball)
+        public void RemoveBall(DataBall ball)
         {
             this.balls.Remove(ball);
         }
