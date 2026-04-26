@@ -8,14 +8,15 @@ namespace Logic
     public class LogicPool : ILogicPool
     {
         public IDataPool Pool { get; }
-        private List<ILogicBall> logicBalls;
+        private List<ILogicBall> _balls;
+        public IReadOnlyCollection<ILogicBall> Balls => _balls.AsReadOnly();
         private readonly IBallFactory _ballFactory;
         public int BallRadius { get; } = 10;
 
         public LogicPool(IDataPool pool, IBallFactory ballFactory)
         {
             Pool = pool;
-            logicBalls = new();
+            _balls = new();
             _ballFactory = ballFactory;
         }
 
@@ -37,13 +38,13 @@ namespace Logic
                 logicBall.DirectionX = Random.Shared.Next(-1, 2);
                 logicBall.DirectionY = Random.Shared.Next(-1, 2);
 
-                logicBalls.Add(logicBall);
+                _balls.Add(logicBall);
             }
         }
 
         public void Update()
         {
-            foreach (var ball in logicBalls)
+            foreach (var ball in _balls)
             {
                 ball.Update();
                 if (ball.Ball.X <= BallRadius)

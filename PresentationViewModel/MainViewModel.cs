@@ -1,0 +1,78 @@
+﻿using PresentationModel;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Windows;
+using System.Windows.Input;
+
+namespace PresentationViewModel
+{
+    public class MainViewModel : INotifyPropertyChanged
+    {
+        private readonly IModelPool _modelPool;
+
+        private int _ballCount;
+        private ObservableCollection<ModelBall> _balls;
+
+        public double CanvasWidth { get; private set; }
+        public double CanvasHeight { get; private set; }
+        public ICommand UpdateSizeCommand { get; }
+        public ICommand CanvasLoadedCommand { get; }
+
+        public int BallCount
+        {
+            get => _ballCount;
+            set
+            {
+                if (_ballCount != value)
+                {
+                    _ballCount = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public ObservableCollection<ModelBall> Balls
+        {
+            get => _balls;
+            set
+            {
+                _balls = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ICommand StartCommand { get; }
+
+        public MainViewModel(IModelPool modelPool)
+        {
+            _modelPool = modelPool;
+            Balls = _modelPool.GetBalls();
+            StartCommand = new RelayCommand(StartSimulation);
+            UpdateSizeCommand = new RelayCommand<SizeChangedEventArgs>(OnCanvasSizeChanged);
+        }
+
+        private void OnCanvasSizeChanged(SizeChangedEventArgs e)
+        {
+            CanvasWidth = e.NewSize.Width;
+            CanvasHeight = e.NewSize.Height;
+
+            _modelPool.CanvasWidth = (int)Math.Floor(CanvasWidth);
+            _modelPool.CanvasHeight = (int)Math.Floor(CanvasHeight);
+        }
+
+        private void StartSimulation()
+        {
+            if (BallCount > 0)
+            {
+                _modelPool.Start(BallCount);
+            }
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}
