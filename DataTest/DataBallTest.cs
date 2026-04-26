@@ -1,6 +1,6 @@
 ﻿using Data;
 
-namespace UnitTests
+namespace DataTest
 {
     public class DataBallTest
     {
