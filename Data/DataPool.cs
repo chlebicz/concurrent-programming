@@ -4,26 +4,25 @@ using System.Text;
 
 namespace Data
 {
-    public class DataPool
+    public class DataPool : IDataPool
     {
-        public int XDim {  get; }
+        public int XDim { get; }
         public int YDim { get; }
-        private List<DataBall> balls;
-
+        private List<IDataBall> balls;
 
         public DataPool(int xDim, int yDim)
         {
             XDim = xDim;
             YDim = yDim;
-            balls = new List<DataBall>();
+            balls = new List<IDataBall>();
         }
 
-        public void AddBall(DataBall ball)
+        public void AddBall(IDataBall ball)
         {
             this.balls.Add(ball);
         }
 
-        public void RemoveBall(DataBall ball)
+        public void RemoveBall(IDataBall ball)
         {
             this.balls.Remove(ball);
         }

@@ -5,27 +5,29 @@ using System.Text;
 
 namespace Logic
 {
-    public class LogicPool
+    public class LogicPool : ILogicPool
     {
-        public DataPool Pool { get; }
+        public IDataPool Pool { get; }
+        private List<ILogicBall> logicBalls;
+        private readonly IBallFactory _ballFactory;
+        public int BallRadius { get; } = 10;
 
-        private List<LogicBall> logicBalls;
-
-        public LogicPool(int xDim, int yDim, int balls)
+        public LogicPool(IDataPool pool, IBallFactory ballFactory)
         {
-            Pool = new DataPool(xDim, yDim);
-            logicBalls = new List<LogicBall>();
-            Prepare(balls);
+            Pool = pool;
+            logicBalls = new();
+            _ballFactory = ballFactory;
         }
 
         public void Prepare(int balls)
         {
             for (int i = 0; i < balls; i++)
             {
-                DataBall dataBall = new DataBall(
-                    i, 
-                    Random.Shared.Next(DataBall.Radius, Pool.XDim-DataBall.Radius), 
-                    Random.Shared.Next(DataBall.Radius, Pool.YDim-DataBall.Radius)
+                var dataBall = _ballFactory.CreateBall(
+                    i,
+                    Random.Shared.Next(BallRadius, Pool.XDim - BallRadius),
+                    Random.Shared.Next(BallRadius, Pool.YDim - BallRadius),
+                    BallRadius
                 );
 
                 Pool.AddBall(dataBall);
@@ -44,24 +46,24 @@ namespace Logic
             foreach (var ball in logicBalls)
             {
                 ball.Update();
-                if (ball.Ball.X <= DataBall.Radius)
+                if (ball.Ball.X <= BallRadius)
                 {
-                    ball.Ball.X = DataBall.Radius;
+                    ball.Ball.X = BallRadius;
                     ball.DirectionX *= -1;
                 }
-                if (ball.Ball.X >= Pool.XDim - DataBall.Radius)
+                if (ball.Ball.X >= Pool.XDim - BallRadius)
                 {
-                    ball.Ball.X = Pool.XDim - DataBall.Radius;
+                    ball.Ball.X = Pool.XDim - BallRadius;
                     ball.DirectionX *= -1;
                 }
-                if (ball.Ball.Y <= DataBall.Radius)
+                if (ball.Ball.Y <= BallRadius)
                 {
-                    ball.Ball.Y = DataBall.Radius;
+                    ball.Ball.Y = BallRadius;
                     ball.DirectionY *= -1;
                 }
-                if (ball.Ball.Y >= Pool.YDim - DataBall.Radius)
+                if (ball.Ball.Y >= Pool.YDim - BallRadius)
                 {
-                    ball.Ball.Y = Pool.YDim - DataBall.Radius;
+                    ball.Ball.Y = Pool.YDim - BallRadius;
                     ball.DirectionY *= -1;
                 }
             }

@@ -5,13 +5,13 @@ using Data;
 
 namespace Logic
 {
-    public class LogicBall
+    public class LogicBall : ILogicBall
     {
-        public DataBall Ball {  get; }
+        public IDataBall Ball {  get; }
         public int DirectionX { get; set; } = 0;
         public int DirectionY { get; set; } = 0;
 
-        public LogicBall(DataBall dataBall)
+        public LogicBall(IDataBall dataBall)
         {
             this.Ball = dataBall;
         }
