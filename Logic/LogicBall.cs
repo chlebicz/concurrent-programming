@@ -7,19 +7,19 @@ namespace Logic
 {
     public class LogicBall
     {
-        public DataBall dataBall {  get; }
+        public DataBall Ball {  get; }
         public int DirectionX { get; set; } = 0;
         public int DirectionY { get; set; } = 0;
 
         public LogicBall(DataBall dataBall)
         {
-            this.dataBall = dataBall;
+            this.Ball = dataBall;
         }
 
         public void Update()
         {
-            dataBall.X += 10 * DirectionX;
-            dataBall.Y += 10 * DirectionY;
+            Ball.X += 10 * DirectionX;
+            Ball.Y += 10 * DirectionY;
         }
     }
 }
