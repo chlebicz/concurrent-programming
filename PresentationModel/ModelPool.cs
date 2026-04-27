@@ -11,7 +11,7 @@ namespace PresentationModel
     {
         private readonly ILogicPool _logicPool;
         private readonly DispatcherTimer _timer;
-        private readonly ObservableCollection<ModelBall> _balls;
+        private ObservableCollection<ModelBall> _balls;
 
         public int CanvasWidth { get; set; }
         public int CanvasHeight { get; set; }
@@ -24,13 +24,14 @@ namespace PresentationModel
             _timer = new DispatcherTimer();
             _timer.Interval = System.TimeSpan.FromMilliseconds(16);
             _timer.Tick += (s, e) => UpdateModel();
-
-            CanvasWidth = logicPool.Pool.XDim;
-            CanvasHeight = logicPool.Pool.YDim;
         }
 
         public void Start(int ballCount)
         {
+            if (_balls.Count != 0)
+            {
+                _logicPool.ClearBalls();
+            }
             _logicPool.Prepare(ballCount);
 
             _balls.Clear();
@@ -40,7 +41,7 @@ namespace PresentationModel
                 {
                     Radius = lBall.Ball.Radius,
                     X = MapX(lBall.Ball.X),
-                    Y = MapY(lBall.Ball.X)
+                    Y = MapY(lBall.Ball.Y)
                 };
                 _balls.Add(mBall);
             }

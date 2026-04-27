@@ -69,5 +69,10 @@ namespace Logic
                 }
             }
         }
+
+        public void ClearBalls()
+        {
+            _balls.Clear();
+        }
     }
 }

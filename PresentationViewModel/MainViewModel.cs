@@ -44,11 +44,14 @@ namespace PresentationViewModel
 
         public ICommand StartCommand { get; }
 
+        public ICommand StopCommand { get; }
+
         public MainViewModel(IModelPool modelPool)
         {
             _modelPool = modelPool;
             Balls = _modelPool.GetBalls();
             StartCommand = new RelayCommand(StartSimulation);
+            StopCommand = new RelayCommand(StopSimulation);
             UpdateSizeCommand = new RelayCommand<SizeChangedEventArgs>(OnCanvasSizeChanged);
             CanvasLoadedCommand = new RelayCommand<RoutedEventArgs>(OnCanvasLoaded);
         }
@@ -77,10 +80,12 @@ namespace PresentationViewModel
 
         private void StartSimulation()
         {
-            if (BallCount > 0)
-            {
-                _modelPool.Start(BallCount);
-            }
+            _modelPool.Start(BallCount);
+        }
+
+        private void StopSimulation()
+        {
+            _modelPool.Stop();
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
