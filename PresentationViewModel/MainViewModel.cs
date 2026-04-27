@@ -1,4 +1,4 @@
-﻿using PresentationModel;
+using PresentationModel;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -44,18 +44,35 @@ namespace PresentationViewModel
 
         public ICommand StartCommand { get; }
 
+        public ICommand StopCommand { get; }
+
         public MainViewModel(IModelPool modelPool)
         {
             _modelPool = modelPool;
             Balls = _modelPool.GetBalls();
             StartCommand = new RelayCommand(StartSimulation);
+            StopCommand = new RelayCommand(StopSimulation);
             UpdateSizeCommand = new RelayCommand<SizeChangedEventArgs>(OnCanvasSizeChanged);
+            CanvasLoadedCommand = new RelayCommand<RoutedEventArgs>(OnCanvasLoaded);
+        }
+
+        private void OnCanvasLoaded(RoutedEventArgs e)
+        {
+            if (e.Source is FrameworkElement element)
+            {
+                UpdateCanvasSize(element.ActualWidth, element.ActualHeight);
+            }
         }
 
         private void OnCanvasSizeChanged(SizeChangedEventArgs e)
         {
-            CanvasWidth = e.NewSize.Width;
-            CanvasHeight = e.NewSize.Height;
+            UpdateCanvasSize(e.NewSize.Width, e.NewSize.Height);
+        }
+
+        private void UpdateCanvasSize(double width, double height)
+        {
+            CanvasWidth = width;
+            CanvasHeight = height;
 
             _modelPool.CanvasWidth = (int)Math.Floor(CanvasWidth);
             _modelPool.CanvasHeight = (int)Math.Floor(CanvasHeight);
@@ -63,10 +80,12 @@ namespace PresentationViewModel
 
         private void StartSimulation()
         {
-            if (BallCount > 0)
-            {
-                _modelPool.Start(BallCount);
-            }
+            _modelPool.Start(BallCount);
+        }
+
+        private void StopSimulation()
+        {
+            _modelPool.Stop();
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

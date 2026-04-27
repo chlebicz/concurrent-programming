@@ -9,6 +9,7 @@ namespace Logic
     {
         public IDataPool Pool { get; }
         public void Prepare(int balls);
+        public void ClearBalls();
         public void Update();
         public IReadOnlyCollection<ILogicBall> Balls { get; }
     }

@@ -18,7 +18,7 @@ namespace View
             base.OnStartup(e);
 
             IBallFactory ballFactory = new BallFactory();
-            IDataPool pool = new DataPool(756, 340);
+            IDataPool pool = new DataPool(500, 300);
             ILogicPool logicPool = new LogicPool(pool, ballFactory);
             IModelPoolFactory modelPoolFactory = new ModelPoolFactory();
             IModelPool modelPool = modelPoolFactory.CreatePool(logicPool);
