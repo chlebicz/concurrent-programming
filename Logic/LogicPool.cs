@@ -35,8 +35,11 @@ namespace Logic
 
                 LogicBall logicBall = new LogicBall(dataBall);
 
-                logicBall.DirectionX = Random.Shared.Next(-1, 2);
-                logicBall.DirectionY = Random.Shared.Next(-1, 2);
+                while (logicBall.DirectionX == 0 && logicBall.DirectionY == 0)
+                {
+                    logicBall.DirectionX = Random.Shared.Next(-1, 2);
+                    logicBall.DirectionY = Random.Shared.Next(-1, 2);
+                }
 
                 _balls.Add(logicBall);
             }
