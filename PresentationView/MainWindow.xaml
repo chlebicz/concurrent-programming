@@ -25,6 +25,10 @@
                     <ItemsPanelTemplate>
                         <Canvas Background="White" ClipToBounds="True">
                             <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="Loaded">
+                                    <i:InvokeCommandAction Command="{Binding CanvasLoadedCommand}" 
+                                   PassEventArgsToCommand="True" />
+                                </i:EventTrigger>
                                 <i:EventTrigger EventName="SizeChanged">
                                     <i:InvokeCommandAction Command="{Binding UpdateSizeCommand}" 
                                    PassEventArgsToCommand="True" />
