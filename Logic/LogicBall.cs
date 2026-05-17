@@ -7,19 +7,29 @@ namespace Logic
 {
     public class LogicBall : ILogicBall
     {
-        public IDataBall Ball {  get; }
-        public int DirectionX { get; set; } = 0;
-        public int DirectionY { get; set; } = 0;
+        public IDataBall Ball { get; }
 
         public LogicBall(IDataBall dataBall)
         {
-            this.Ball = dataBall;
+            Ball = dataBall;
+            RandomiseDirection();
+        }
+
+        public void RandomiseDirection()
+        {
+            // generate random vector of length 1
+            Ball.DirectionX = 2 * Random.Shared.NextSingle() - 1;
+            Ball.DirectionY = (float) Math.Sqrt(1 - Ball.DirectionX * Ball.DirectionX);
+            if (Random.Shared.NextSingle() >= 0.5)
+            {
+                Ball.DirectionY *= -1;
+            }
         }
 
         public void Update()
         {
-            Ball.X += 10 * DirectionX;
-            Ball.Y += 10 * DirectionY;
+            Ball.X += Ball.Velocity * Ball.DirectionX;
+            Ball.Y += Ball.Velocity * Ball.DirectionY;
         }
     }
 }

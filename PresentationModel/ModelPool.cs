@@ -65,14 +65,14 @@ namespace PresentationModel
             }
         }
 
-        private int MapX(int x)
+        private int MapX(float x)
         {
-            return x * CanvasWidth / _logicPool.Pool.XDim;
+            return (int)(x * CanvasWidth / _logicPool.Pool.XDim);
         }
 
-        private int MapY(int y)
+        private int MapY(float y)
         {
-            return y * CanvasHeight / _logicPool.Pool.YDim;
+            return (int)(y * CanvasHeight / _logicPool.Pool.YDim);
         }
     }
 }

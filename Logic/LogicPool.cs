@@ -34,13 +34,6 @@ namespace Logic
                 Pool.AddBall(dataBall);
 
                 LogicBall logicBall = new LogicBall(dataBall);
-
-                while (logicBall.DirectionX == 0 && logicBall.DirectionY == 0)
-                {
-                    logicBall.DirectionX = Random.Shared.Next(-1, 2);
-                    logicBall.DirectionY = Random.Shared.Next(-1, 2);
-                }
-
                 _balls.Add(logicBall);
             }
         }
@@ -53,22 +46,22 @@ namespace Logic
                 if (ball.Ball.X <= BallRadius)
                 {
                     ball.Ball.X = BallRadius;
-                    ball.DirectionX *= -1;
+                    ball.Ball.DirectionX *= -1;
                 }
                 if (ball.Ball.X >= Pool.XDim - BallRadius)
                 {
                     ball.Ball.X = Pool.XDim - BallRadius;
-                    ball.DirectionX *= -1;
+                    ball.Ball.DirectionX *= -1;
                 }
                 if (ball.Ball.Y <= BallRadius)
                 {
                     ball.Ball.Y = BallRadius;
-                    ball.DirectionY *= -1;
+                    ball.Ball.DirectionY *= -1;
                 }
                 if (ball.Ball.Y >= Pool.YDim - BallRadius)
                 {
                     ball.Ball.Y = Pool.YDim - BallRadius;
-                    ball.DirectionY *= -1;
+                    ball.Ball.DirectionY *= -1;
                 }
             }
         }

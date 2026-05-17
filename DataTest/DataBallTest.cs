@@ -12,6 +12,8 @@ namespace DataTest
             Assert.Equal(5, ball.X);
             Assert.Equal(7, ball.Y);
             Assert.Equal(10, ball.Radius);
+            Assert.Equal(0, ball.DirectionX);
+            Assert.Equal(0, ball.DirectionY);
         }
     }
 }
