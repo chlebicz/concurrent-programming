@@ -9,7 +9,7 @@ namespace LogicTest
     {
         public IDataBall CreateBall(int number, int xPos, int yPos, int radius)
         {
-            return new FakeDataBall();
+            return new FakeDataBall(number, xPos, yPos, radius);
         }
 
     }

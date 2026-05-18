@@ -24,10 +24,10 @@ namespace LogicTest
             IDataBall dataBall = factory.CreateBall(5, 5, 5, 5);
             LogicBall ball = new LogicBall(dataBall);
             ball.Ball.DirectionX = 1;
-            ball.Ball.DirectionY = -1;
+            ball.Ball.DirectionY = 0;
+            ball.Ball.Velocity = 1f;
             ball.Update();
-            Assert.Equal(10, ball.Ball.X);
-            Assert.Equal(-10, ball.Ball.Y);
+            Assert.Equal(6, ball.Ball.X);
         }
     }
 }

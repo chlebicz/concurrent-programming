@@ -51,7 +51,7 @@ namespace Logic
             }
         }
 
-        private void _checkWallCollision(ILogicBall ball)
+        public void CheckWallCollision(ILogicBall ball)
         {
             if (ball.Ball.X <= BallRadius)
             {
@@ -75,7 +75,7 @@ namespace Logic
             }
         }
 
-        private void _checkBallCollision(ILogicBall ball)
+        public void CheckBallCollision(ILogicBall ball)
         {
             foreach (ILogicBall otherBall in _balls)
             {
@@ -166,9 +166,9 @@ namespace Logic
                 lock (ball)
                 {
                     ball.Update();
-                    _checkWallCollision(ball);
+                    CheckWallCollision(ball);
                 }
-                _checkBallCollision(ball);
+                CheckBallCollision(ball);
 
                 await Task.Delay(16, token);
             }
