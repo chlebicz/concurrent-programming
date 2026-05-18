@@ -69,34 +69,46 @@ namespace Logic
             }
         }
 
+        private List<Task> _tasks = new();
+
         public void StartMovement()
         {
+            StopMovement();
+
+            if (_tasks.Count > 0)
+            {
+                Task.WaitAll(_tasks);
+            }
+
+            _cts?.Dispose();
             _cts = new CancellationTokenSource();
+            _tasks.Clear();
 
             foreach (var ball in _balls)
             {
-                Task.Run(() => MoveBallLoop(ball, _cts.Token));
+                Task ballTask = Task.Run(() => MoveBallLoop(ball, _cts.Token));
+                _tasks.Add(ballTask);
             }
         }
 
         private void _checkWallCollision(ILogicBall ball)
         {
-            if (ball.Ball.X <= BallRadius)
+            if (ball.Ball.X <= BallRadius && ball.Ball.DirectionX < 0)
             {
                 ball.Ball.X = BallRadius;
                 ball.Ball.DirectionX *= -1;
             }
-            if (ball.Ball.X >= Pool.XDim - BallRadius)
+            if (ball.Ball.X >= Pool.XDim - BallRadius && ball.Ball.DirectionX > 0)
             {
                 ball.Ball.X = Pool.XDim - BallRadius;
                 ball.Ball.DirectionX *= -1;
             }
-            if (ball.Ball.Y <= BallRadius)
+            if (ball.Ball.Y <= BallRadius && ball.Ball.DirectionY < 0)
             {
                 ball.Ball.Y = BallRadius;
                 ball.Ball.DirectionY *= -1;
             }
-            if (ball.Ball.Y >= Pool.YDim - BallRadius)
+            if (ball.Ball.Y >= Pool.YDim - BallRadius && ball.Ball.DirectionY > 0)
             {
                 ball.Ball.Y = Pool.YDim - BallRadius;
                 ball.Ball.DirectionY *= -1;
@@ -205,6 +217,11 @@ namespace Logic
         public void ClearBalls()
         {
             StopMovement();
+            if (_tasks.Count > 0)
+            {
+                Task.WaitAll(_tasks);
+            }
+
             _balls.Clear();
         }
 
