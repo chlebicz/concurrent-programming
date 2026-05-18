@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Text;
+﻿using System.Collections.ObjectModel;
 
 namespace PresentationModel
 {
-    public interface IModelPool
+    public interface IModelPool : IDisposable
     {
         public int CanvasWidth { get; set; }
         public int CanvasHeight { get; set; }

@@ -2,8 +2,6 @@
 using Logic;
 using PresentationModel;
 using PresentationViewModel;
-using System.Configuration;
-using System.Data;
 using System.Windows;
 
 namespace View
@@ -20,8 +18,7 @@ namespace View
             IBallFactory ballFactory = new BallFactory();
             IDataPool pool = new DataPool(500, 300);
             ILogicPool logicPool = new LogicPool(pool, ballFactory);
-            IModelPoolFactory modelPoolFactory = new ModelPoolFactory();
-            IModelPool modelPool = modelPoolFactory.CreatePool(logicPool);
+            IModelPool modelPool = new ModelPool(logicPool);
             MainViewModel viewModel = new MainViewModel(modelPool);
 
             MainWindow window = new MainWindow();

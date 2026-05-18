@@ -17,6 +17,8 @@ namespace PresentationViewModel
         public ICommand UpdateSizeCommand { get; }
         public ICommand CanvasLoadedCommand { get; }
 
+        public ICommand WindowClosedCommand { get; }
+
         public int CanvasWidth { get; set; } = 600;
         public int CanvasHeight { get; set; } = 400;
 
@@ -78,6 +80,12 @@ namespace PresentationViewModel
             StopCommand = new RelayCommand(StopSimulation);
             UpdateSizeCommand = new RelayCommand<SizeChangedEventArgs>(OnCanvasSizeChanged);
             CanvasLoadedCommand = new RelayCommand<RoutedEventArgs>(OnCanvasLoaded);
+            WindowClosedCommand = new RelayCommand(OnWindowClosed);
+        }
+
+        private void OnWindowClosed()
+        {
+            _modelPool.Dispose();
         }
 
         private void OnCanvasLoaded(RoutedEventArgs e)

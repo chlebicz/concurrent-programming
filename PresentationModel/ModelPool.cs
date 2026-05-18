@@ -1,13 +1,10 @@
 ﻿using Logic;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Threading;
-using System.Text;
 
 namespace PresentationModel
 {
-    internal class ModelPool : IModelPool
+    public class ModelPool : IModelPool
     {
         private readonly ILogicPool _logicPool;
         private readonly DispatcherTimer _timer;
@@ -105,6 +102,11 @@ namespace PresentationModel
         private int _mapY(float y)
         {
             return (int)(y * CanvasHeight / _logicPool.Pool.YDim);
+        }
+
+        public void Dispose()
+        {
+            _logicPool.Dispose();
         }
     }
 }

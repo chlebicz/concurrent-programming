@@ -11,6 +11,5 @@ namespace LogicTest
         {
             return new FakeDataBall(number, xPos, yPos, radius);
         }
-
     }
 }

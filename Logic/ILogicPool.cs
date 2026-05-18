@@ -1,11 +1,8 @@
 ﻿using Data;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Logic
 {
-    public interface ILogicPool
+    public interface ILogicPool : IDisposable
     {
         public IDataPool Pool { get; }
         public void Prepare(int balls);
