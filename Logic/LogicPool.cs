@@ -1,6 +1,7 @@
 ﻿using Data;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -23,52 +24,91 @@ namespace Logic
             _ballFactory = ballFactory;
         }
 
+        private bool _collidesWithAny(ILogicBall ball)
+        {
+            bool result = false;
+            foreach (var otherBall in _balls)
+            {
+                if (ball != otherBall && ball.CollidesWith(otherBall))
+                {
+                    result = true;
+                    break;
+                }
+            }
+            return result;
+        }
+
         public void Prepare(int balls)
         {
             for (int i = 0; i < balls; i++)
             {
-                var dataBall = _ballFactory.CreateBall(
-                    i,
-                    Random.Shared.Next(BallRadius, Pool.XDim - BallRadius),
-                    Random.Shared.Next(BallRadius, Pool.YDim - BallRadius),
-                    BallRadius
-                );
+                var dataBall = _ballFactory.CreateBall(i, 0, 0, BallRadius);
+                LogicBall logicBall = new(dataBall);
+
+                Stopwatch stopwatch = Stopwatch.StartNew();
+                while (true)
+                {
+                    logicBall.Ball.X = Random.Shared.Next(BallRadius, Pool.XDim - BallRadius);
+                    logicBall.Ball.Y = Random.Shared.Next(BallRadius, Pool.YDim - BallRadius);
+
+                    if (!_collidesWithAny(logicBall))
+                    {
+                        break;
+                    }
+
+                    if (stopwatch.ElapsedMilliseconds >= 2000)
+                    {
+                        throw new Exception(
+                            $"Couldn't create {balls} balls that don't intersect - probably not enough space"
+                        );
+                    }
+                }
 
                 Pool.AddBall(dataBall);
-
-                LogicBall logicBall = new LogicBall(dataBall);
                 _balls.Add(logicBall);
             }
         }
 
+        private List<Task> _tasks = new();
+
         public void StartMovement()
         {
+            StopMovement();
+
+            if (_tasks.Count > 0)
+            {
+                Task.WaitAll(_tasks);
+            }
+
+            _cts?.Dispose();
             _cts = new CancellationTokenSource();
+            _tasks.Clear();
 
             foreach (var ball in _balls)
             {
-                Task.Run(() => MoveBallLoop(ball, _cts.Token));
+                Task ballTask = Task.Run(() => MoveBallLoop(ball, _cts.Token));
+                _tasks.Add(ballTask);
             }
         }
 
         public void CheckWallCollision(ILogicBall ball)
         {
-            if (ball.Ball.X <= BallRadius)
+            if (ball.Ball.X <= BallRadius && ball.Ball.DirectionX < 0)
             {
                 ball.Ball.X = BallRadius;
                 ball.Ball.DirectionX *= -1;
             }
-            if (ball.Ball.X >= Pool.XDim - BallRadius)
+            if (ball.Ball.X >= Pool.XDim - BallRadius && ball.Ball.DirectionX > 0)
             {
                 ball.Ball.X = Pool.XDim - BallRadius;
                 ball.Ball.DirectionX *= -1;
             }
-            if (ball.Ball.Y <= BallRadius)
+            if (ball.Ball.Y <= BallRadius && ball.Ball.DirectionY < 0)
             {
                 ball.Ball.Y = BallRadius;
                 ball.Ball.DirectionY *= -1;
             }
-            if (ball.Ball.Y >= Pool.YDim - BallRadius)
+            if (ball.Ball.Y >= Pool.YDim - BallRadius && ball.Ball.DirectionY > 0)
             {
                 ball.Ball.Y = Pool.YDim - BallRadius;
                 ball.Ball.DirectionY *= -1;
@@ -177,6 +217,11 @@ namespace Logic
         public void ClearBalls()
         {
             StopMovement();
+            if (_tasks.Count > 0)
+            {
+                Task.WaitAll(_tasks);
+            }
+
             _balls.Clear();
         }
 
