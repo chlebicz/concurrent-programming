@@ -46,17 +46,21 @@ namespace PresentationModel
                 _balls.Add(mBall);
             }
 
+            _logicPool.StartMovement();
+
             _timer.Start();
         }
 
-        public void Stop() => _timer.Stop();
+        public void Stop()
+        {
+            _timer.Stop();
+            _logicPool.StopMovement();
+        }
 
         public ObservableCollection<ModelBall> GetBalls() => _balls;
 
         private void UpdateModel()
         {
-            _logicPool.Update();
-
             for (int i = 0; i < _logicPool.Balls.Count; i++)
             {
                 var ball = _logicPool.Balls.ElementAt(i);

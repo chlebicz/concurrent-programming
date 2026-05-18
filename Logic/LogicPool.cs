@@ -1,17 +1,20 @@
 ﻿using Data;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Logic
 {
-    public class LogicPool : ILogicPool
+    public class LogicPool : ILogicPool, IDisposable
     {
         public IDataPool Pool { get; }
         private List<ILogicBall> _balls;
         public IReadOnlyCollection<ILogicBall> Balls => _balls.AsReadOnly();
         private readonly IBallFactory _ballFactory;
         public int BallRadius { get; } = 10;
+
+        private CancellationTokenSource _cts;
 
         public LogicPool(IDataPool pool, IBallFactory ballFactory)
         {
@@ -38,11 +41,22 @@ namespace Logic
             }
         }
 
-        public void Update()
+        public void StartMovement()
         {
+            _cts = new CancellationTokenSource();
+
             foreach (var ball in _balls)
             {
+                Task.Run(() => MoveBallLoop(ball, _cts.Token));
+            }
+        }
+
+        private async Task MoveBallLoop(ILogicBall ball, CancellationToken token)
+        {
+            while (!token.IsCancellationRequested)
+            {
                 ball.Update();
+
                 if (ball.Ball.X <= BallRadius)
                 {
                     ball.Ball.X = BallRadius;
@@ -63,12 +77,26 @@ namespace Logic
                     ball.Ball.Y = Pool.YDim - BallRadius;
                     ball.Ball.DirectionY *= -1;
                 }
+
+                await Task.Delay(16, token);
             }
         }
 
         public void ClearBalls()
         {
+            StopMovement();
             _balls.Clear();
+        }
+
+        public void StopMovement()
+        {
+            _cts?.Cancel();
+        }
+
+        public void Dispose()
+        {
+            _cts?.Cancel();
+            _cts?.Dispose();
         }
     }
 }
