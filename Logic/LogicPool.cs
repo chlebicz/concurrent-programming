@@ -1,6 +1,7 @@
 ﻿using Data;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -23,20 +24,47 @@ namespace Logic
             _ballFactory = ballFactory;
         }
 
+        private bool _collidesWithAny(ILogicBall ball)
+        {
+            bool result = false;
+            foreach (var otherBall in _balls)
+            {
+                if (ball != otherBall && ball.CollidesWith(otherBall))
+                {
+                    result = true;
+                    break;
+                }
+            }
+            return result;
+        }
+
         public void Prepare(int balls)
         {
             for (int i = 0; i < balls; i++)
             {
-                var dataBall = _ballFactory.CreateBall(
-                    i,
-                    Random.Shared.Next(BallRadius, Pool.XDim - BallRadius),
-                    Random.Shared.Next(BallRadius, Pool.YDim - BallRadius),
-                    BallRadius
-                );
+                var dataBall = _ballFactory.CreateBall(i, 0, 0, BallRadius);
+                LogicBall logicBall = new(dataBall);
+
+                Stopwatch stopwatch = Stopwatch.StartNew();
+                while (true)
+                {
+                    logicBall.Ball.X = Random.Shared.Next(BallRadius, Pool.XDim - BallRadius);
+                    logicBall.Ball.Y = Random.Shared.Next(BallRadius, Pool.YDim - BallRadius);
+
+                    if (!_collidesWithAny(logicBall))
+                    {
+                        break;
+                    }
+
+                    if (stopwatch.ElapsedMilliseconds >= 2000)
+                    {
+                        throw new Exception(
+                            $"Couldn't create {balls} balls that don't intersect - probably not enough space"
+                        );
+                    }
+                }
 
                 Pool.AddBall(dataBall);
-
-                LogicBall logicBall = new LogicBall(dataBall);
                 _balls.Add(logicBall);
             }
         }
