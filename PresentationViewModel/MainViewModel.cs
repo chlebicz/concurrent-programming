@@ -14,10 +14,11 @@ namespace PresentationViewModel
         private int _ballCount;
         private ObservableCollection<ModelBall> _balls;
 
-        public double CanvasWidth { get; private set; }
-        public double CanvasHeight { get; private set; }
         public ICommand UpdateSizeCommand { get; }
         public ICommand CanvasLoadedCommand { get; }
+
+        public int CanvasWidth { get; set; } = 600;
+        public int CanvasHeight { get; set; } = 400;
 
         public string BallCount
         {
@@ -94,11 +95,8 @@ namespace PresentationViewModel
 
         private void UpdateCanvasSize(double width, double height)
         {
-            CanvasWidth = width;
-            CanvasHeight = height;
-
-            _modelPool.CanvasWidth = (int)Math.Floor(CanvasWidth);
-            _modelPool.CanvasHeight = (int)Math.Floor(CanvasHeight);
+            _modelPool.CanvasWidth = (int) width;
+            _modelPool.CanvasHeight = (int) height;
         }
 
         private void StartSimulation()

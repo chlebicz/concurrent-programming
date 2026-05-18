@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:View"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="500" Width="700">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -41,14 +41,14 @@
 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Ellipse Width="{Binding Radius}" Height="{Binding Radius}" Fill="Red"/>
+                        <Ellipse Width="{Binding DiameterX}" Height="{Binding DiameterY}" Fill="Red"/>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
 
                 <ItemsControl.ItemContainerStyle>
                     <Style TargetType="ContentPresenter">
-                        <Setter Property="Canvas.Left" Value="{Binding X}"/>
-                        <Setter Property="Canvas.Top" Value="{Binding Y}"/>
+                        <Setter Property="Canvas.Left" Value="{Binding Left}"/>
+                        <Setter Property="Canvas.Top" Value="{Binding Top}"/>
                     </Style>
                 </ItemsControl.ItemContainerStyle>
 

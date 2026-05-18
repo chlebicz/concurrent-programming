@@ -13,8 +13,35 @@ namespace PresentationModel
         private readonly DispatcherTimer _timer;
         private ObservableCollection<ModelBall> _balls;
 
-        public int CanvasWidth { get; set; }
-        public int CanvasHeight { get; set; }
+        private void _updateBallRadii()
+        {
+            for (int i = 0; i < _logicPool.Balls.Count; i++)
+            {
+                _balls[i].RadiusX = _mapX(_logicPool.Balls.ElementAt(i).Ball.Radius);
+                _balls[i].RadiusY = _mapY(_logicPool.Balls.ElementAt(i).Ball.Radius);
+            }
+        }
+
+        private int _canvasWidth;
+        public int CanvasWidth
+        {
+            get => _canvasWidth;
+            set
+            {
+                _canvasWidth = value;
+                _updateBallRadii();
+            }
+        }
+
+        private int _canvasHeight;
+        public int CanvasHeight {
+            get => _canvasHeight;
+            set
+            {
+                _canvasHeight = value;
+                _updateBallRadii();
+            }
+        }
 
         public ModelPool(ILogicPool logicPool)
         {
@@ -39,9 +66,10 @@ namespace PresentationModel
             {
                 var mBall = new ModelBall
                 {
-                    Radius = lBall.Ball.Radius,
-                    X = MapX(lBall.Ball.X),
-                    Y = MapY(lBall.Ball.Y)
+                    RadiusX = _mapX(lBall.Ball.Radius),
+                    RadiusY = _mapY(lBall.Ball.Radius),
+                    X = _mapX(lBall.Ball.X),
+                    Y = _mapY(lBall.Ball.Y)
                 };
                 _balls.Add(mBall);
             }
@@ -64,17 +92,17 @@ namespace PresentationModel
             for (int i = 0; i < _logicPool.Balls.Count; i++)
             {
                 var ball = _logicPool.Balls.ElementAt(i);
-                _balls[i].X = MapX(ball.Ball.X);
-                _balls[i].Y = MapY(ball.Ball.Y);
+                _balls[i].X = _mapX(ball.Ball.X);
+                _balls[i].Y = _mapY(ball.Ball.Y);
             }
         }
 
-        private int MapX(float x)
+        private int _mapX(float x)
         {
             return (int)(x * CanvasWidth / _logicPool.Pool.XDim);
         }
 
-        private int MapY(float y)
+        private int _mapY(float y)
         {
             return (int)(y * CanvasHeight / _logicPool.Pool.YDim);
         }
