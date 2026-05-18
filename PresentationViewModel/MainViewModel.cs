@@ -19,14 +19,37 @@ namespace PresentationViewModel
         public ICommand UpdateSizeCommand { get; }
         public ICommand CanvasLoadedCommand { get; }
 
-        public int BallCount
+        public string BallCount
         {
-            get => _ballCount;
+            get {
+                if (_ballCount == 0)
+                {
+                    return "";
+                }
+                else
+                {
+                    return _ballCount.ToString();
+                }
+            }
             set
             {
-                if (_ballCount != value)
+                if (BallCount != value)
                 {
-                    _ballCount = value;
+                    int newBallCount;
+                    if (int.TryParse(value, out newBallCount))
+                    {
+                        _ballCount = newBallCount;
+                    }
+
+                    if (value == "" || newBallCount == 0)
+                    {
+                        _ballCount = 0;
+                        BallCount = "";
+                    }
+                    else
+                    {
+                        BallCount = _ballCount.ToString();
+                    }
                     OnPropertyChanged();
                 }
             }
@@ -80,7 +103,7 @@ namespace PresentationViewModel
 
         private void StartSimulation()
         {
-            _modelPool.Start(BallCount);
+            _modelPool.Start(_ballCount);
         }
 
         private void StopSimulation()
