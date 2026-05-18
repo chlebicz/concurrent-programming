@@ -11,7 +11,7 @@
         public float DirectionX { get; set; } = 1;
         public float DirectionY { get; set; } = 0;
 
-        public float Velocity { get; set; } = 10;
+        public float Velocity { get; set; } = 1;
 
         public DataBall(int number, int xPos, int yPos, int radius)
         {

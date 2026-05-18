@@ -9,5 +9,6 @@ namespace Logic
     {
         public IDataBall Ball { get; }
         public void Update();
+        public bool CollidesWith(ILogicBall other);
     }
 }

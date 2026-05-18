@@ -31,5 +31,13 @@ namespace Logic
             Ball.X += Ball.Velocity * Ball.DirectionX;
             Ball.Y += Ball.Velocity * Ball.DirectionY;
         }
+
+        public bool CollidesWith(ILogicBall other)
+        {
+            float xDiff = other.Ball.X - Ball.X;
+            float yDiff = other.Ball.Y - Ball.Y;
+            float distance = (float) Math.Sqrt(xDiff * xDiff + yDiff * yDiff);
+            return distance <= Ball.Radius + other.Ball.Radius;
+        }
     }
 }
