@@ -18,7 +18,7 @@ namespace LogicTest
         public void PrepareTest()
         {
             IBallFactory factory = new FakeBallFactory();
-            IDataPool pool = new FakeDataPool(100, 100);
+            IDataPool pool = new FakeDataPool(500, 500);
             ILogicPool logicPool = new LogicPool(pool, factory);
             logicPool.Prepare(5);
             Assert.Equal(5, logicPool.Balls.Count);
