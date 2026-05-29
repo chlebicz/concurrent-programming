@@ -3,6 +3,19 @@ using System.Diagnostics;
 
 namespace Logic
 {
+    internal class BallWithTimer
+    {
+        public ILogicBall Ball { get; }
+        public Timer Timer { get; set; }
+        public Stopwatch Stopwatch { get; }
+
+        public BallWithTimer(ILogicBall ball)
+        {
+            Ball = ball;
+            Stopwatch = new Stopwatch();
+        }
+    }
+
     public class LogicPool : ILogicPool
     {
         public IDataPool Pool { get; }
@@ -11,7 +24,7 @@ namespace Logic
         private readonly IBallFactory _ballFactory;
         public int BallRadius { get; } = 15;
 
-        private List<Timer> _timers = new();
+        private List<BallWithTimer> _ballTimers = new();
 
         public LogicPool(IDataPool pool, IBallFactory ballFactory)
         {
@@ -71,8 +84,11 @@ namespace Logic
 
             foreach (var ball in _balls)
             {
-                Timer ballTimer = new Timer(MoveBallCallback, ball, 0, 16);
-                _timers.Add(ballTimer);
+                var ballWithTimer = new BallWithTimer(ball);
+                ballWithTimer.Stopwatch.Start();
+                Timer ballTimer = new Timer(MoveBallCallback, ballWithTimer, 0, 16);
+                ballWithTimer.Timer = ballTimer;
+                _ballTimers.Add(ballWithTimer);
             }
         }
 
@@ -194,14 +210,17 @@ namespace Logic
 
         private void MoveBallCallback(object? state)
         {
-            if (state is not ILogicBall ball) return;
+            if (state is not BallWithTimer ballWithTimer) return;
 
-            lock (ball)
+            float deltaTime = (float)ballWithTimer.Stopwatch.Elapsed.TotalSeconds;
+            ballWithTimer.Stopwatch.Restart();
+
+            lock (ballWithTimer.Ball)
             {
-                ball.Update();
-                CheckWallCollision(ball);
+                ballWithTimer.Ball.Update(deltaTime);
+                CheckWallCollision(ballWithTimer.Ball);
             }
-            CheckBallCollision(ball);
+            CheckBallCollision(ballWithTimer.Ball);
         }
 
         public void ClearBalls()
@@ -212,11 +231,12 @@ namespace Logic
 
         public void StopMovement()
         {
-            foreach (var timer in _timers)
+            foreach (var bwt in _ballTimers)
             {
-                timer.Dispose();
+                bwt.Timer.Dispose();
+                bwt.Stopwatch.Stop();
             }
-            _timers.Clear();
+            _ballTimers.Clear();
         }
 
         public void Dispose()

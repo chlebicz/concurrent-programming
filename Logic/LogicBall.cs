@@ -23,10 +23,12 @@ namespace Logic
             }
         }
 
-        public void Update()
+        public void Update(float deltaTime)
         {
-            Ball.X += Ball.Velocity * Ball.DirectionX;
-            Ball.Y += Ball.Velocity * Ball.DirectionY;
+            // We multiply by a constant to maintain reasonable speed on screen
+            // Assuming deltaTime is in seconds
+            Ball.X += Ball.Velocity * Ball.DirectionX * deltaTime * 100;
+            Ball.Y += Ball.Velocity * Ball.DirectionY * deltaTime * 100;
         }
 
         public bool CollidesWith(ILogicBall other)
