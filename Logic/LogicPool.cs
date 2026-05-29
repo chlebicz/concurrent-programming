@@ -12,6 +12,7 @@ namespace Logic
         public int BallRadius { get; } = 15;
 
         private List<Timer> _timers = new();
+        private DiagnosticLogger? _logger;
 
         public LogicPool(IDataPool pool, IBallFactory ballFactory)
         {
@@ -68,6 +69,10 @@ namespace Logic
         public void StartMovement()
         {
             StopMovement();
+
+            // Initialize logger when movement starts
+            // We use a relative path for the log file
+            _logger = new DiagnosticLogger(new DataLogger("log.json"));
 
             foreach (var ball in _balls)
             {
@@ -202,6 +207,9 @@ namespace Logic
                 CheckWallCollision(ball);
             }
             CheckBallCollision(ball);
+            
+            // Log state after update
+            _logger?.LogBallState(ball);
         }
 
         public void ClearBalls()
@@ -217,6 +225,9 @@ namespace Logic
                 timer.Dispose();
             }
             _timers.Clear();
+
+            _logger?.Dispose();
+            _logger = null;
         }
 
         public void Dispose()
