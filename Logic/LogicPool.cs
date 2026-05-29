@@ -1,4 +1,4 @@
-﻿using Data;
+using Data;
 using System.Diagnostics;
 
 namespace Logic
@@ -11,7 +11,7 @@ namespace Logic
         private readonly IBallFactory _ballFactory;
         public int BallRadius { get; } = 15;
 
-        private CancellationTokenSource _cts;
+        private List<Timer> _timers = new();
 
         public LogicPool(IDataPool pool, IBallFactory ballFactory)
         {
@@ -65,25 +65,14 @@ namespace Logic
             }
         }
 
-        private List<Task> _tasks = new();
-
         public void StartMovement()
         {
             StopMovement();
 
-            if (_tasks.Count > 0)
-            {
-                Task.WaitAll(_tasks);
-            }
-
-            _cts?.Dispose();
-            _cts = new CancellationTokenSource();
-            _tasks.Clear();
-
             foreach (var ball in _balls)
             {
-                Task ballTask = Task.Run(() => MoveBallLoop(ball, _cts.Token));
-                _tasks.Add(ballTask);
+                Timer ballTimer = new Timer(MoveBallCallback, ball, 0, 16);
+                _timers.Add(ballTimer);
             }
         }
 
@@ -203,46 +192,36 @@ namespace Logic
             }
         }
 
-        private async Task MoveBallLoop(ILogicBall ball, CancellationToken token)
+        private void MoveBallCallback(object? state)
         {
-            try
-            {
-                while (!token.IsCancellationRequested)
-                {
-                    lock (ball)
-                    {
-                        ball.Update();
-                        CheckWallCollision(ball);
-                    }
-                    CheckBallCollision(ball);
+            if (state is not ILogicBall ball) return;
 
-                    await Task.Delay(16, token);
-                }
+            lock (ball)
+            {
+                ball.Update();
+                CheckWallCollision(ball);
             }
-            catch (TaskCanceledException)
-            {}
+            CheckBallCollision(ball);
         }
 
         public void ClearBalls()
         {
             StopMovement();
-            if (_tasks.Count > 0)
-            {
-                Task.WaitAll(_tasks);
-            }
-
             _balls.Clear();
         }
 
         public void StopMovement()
         {
-            _cts?.Cancel();
+            foreach (var timer in _timers)
+            {
+                timer.Dispose();
+            }
+            _timers.Clear();
         }
 
         public void Dispose()
         {
-            _cts?.Cancel();
-            _cts?.Dispose();
+            StopMovement();
         }
     }
 }
