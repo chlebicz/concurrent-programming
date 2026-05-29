@@ -228,7 +228,7 @@ namespace Logic
             CheckBallCollision(ballWithTimer.Ball);
             
             // Log state after update
-            _logger?.LogBallState(ball);
+            _logger?.LogBallState(ballWithTimer.Ball);
         }
 
         public void ClearBalls()
