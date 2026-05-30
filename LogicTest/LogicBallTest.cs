@@ -26,7 +26,7 @@ namespace LogicTest
             ball.Ball.DirectionX = 1;
             ball.Ball.DirectionY = 0;
             ball.Ball.Velocity = 1f;
-            ball.Update();
+            ball.Update(1.0f);
             Assert.Equal(6, ball.Ball.X);
         }
     }

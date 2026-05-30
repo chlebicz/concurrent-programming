@@ -83,8 +83,6 @@ namespace Logic
         {
             StopMovement();
 
-            // Initialize logger when movement starts
-            // We use a relative path for the log file
             _logger = new DiagnosticLogger(new DataLogger("log.json"));
 
             foreach (var ball in _balls)

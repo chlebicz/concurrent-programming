@@ -24,8 +24,7 @@ namespace Logic
         {
             var dto = new BallStateDto(ball);
             string json = JsonSerializer.Serialize(dto);
-            
-            // Non-blocking add to queue
+
             _logQueue.Add(json);
         }
 

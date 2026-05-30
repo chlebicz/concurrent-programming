@@ -1,4 +1,4 @@
-﻿using Logic;
+using Logic;
 using System.Collections.ObjectModel;
 using System.Windows.Threading;
 
@@ -7,15 +7,19 @@ namespace PresentationModel
     public class ModelPool : IModelPool
     {
         private readonly ILogicPool _logicPool;
-        private readonly DispatcherTimer _timer;
         private ObservableCollection<ModelBall> _balls;
+        private readonly Dispatcher _dispatcher;
 
-        private void _updateBallRadii()
+        private void _updateBalls()
         {
             for (int i = 0; i < _logicPool.Balls.Count; i++)
             {
-                _balls[i].RadiusX = _mapX(_logicPool.Balls.ElementAt(i).Ball.Radius);
-                _balls[i].RadiusY = _mapY(_logicPool.Balls.ElementAt(i).Ball.Radius);
+                var lBall = _logicPool.Balls.ElementAt(i);
+                var mBall = _balls[i];
+                mBall.RadiusX = _mapX(lBall.Ball.Radius);
+                mBall.RadiusY = _mapY(lBall.Ball.Radius);
+                mBall.X = _mapX(lBall.Ball.X);
+                mBall.Y = _mapY(lBall.Ball.Y);
             }
         }
 
@@ -26,7 +30,7 @@ namespace PresentationModel
             set
             {
                 _canvasWidth = value;
-                _updateBallRadii();
+                _updateBalls();
             }
         }
 
@@ -36,7 +40,7 @@ namespace PresentationModel
             set
             {
                 _canvasHeight = value;
-                _updateBallRadii();
+                _updateBalls();
             }
         }
 
@@ -44,10 +48,7 @@ namespace PresentationModel
         {
             _logicPool = logicPool;
             _balls = new ObservableCollection<ModelBall>();
-
-            _timer = new DispatcherTimer();
-            _timer.Interval = System.TimeSpan.FromMilliseconds(16);
-            _timer.Tick += (s, e) => UpdateModel();
+            _dispatcher = Dispatcher.CurrentDispatcher;
         }
 
         public void Start(int ballCount)
@@ -69,30 +70,26 @@ namespace PresentationModel
                     Y = _mapY(lBall.Ball.Y)
                 };
                 _balls.Add(mBall);
+
+                lBall.PositionChanged += (s, e) =>
+                {
+                    _dispatcher.BeginInvoke(() =>
+                    {
+                        mBall.X = _mapX(e.Ball.Ball.X);
+                        mBall.Y = _mapY(e.Ball.Ball.Y);
+                    });
+                };
             }
 
             _logicPool.StartMovement();
-
-            _timer.Start();
         }
 
         public void Stop()
         {
-            _timer.Stop();
             _logicPool.StopMovement();
         }
 
         public ObservableCollection<ModelBall> GetBalls() => _balls;
-
-        private void UpdateModel()
-        {
-            for (int i = 0; i < _logicPool.Balls.Count; i++)
-            {
-                var ball = _logicPool.Balls.ElementAt(i);
-                _balls[i].X = _mapX(ball.Ball.X);
-                _balls[i].Y = _mapY(ball.Ball.Y);
-            }
-        }
 
         private int _mapX(float x)
         {
