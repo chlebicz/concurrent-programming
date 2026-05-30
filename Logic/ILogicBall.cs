@@ -11,11 +11,12 @@ namespace Logic
         }
     }
 
-    public interface ILogicBall
+    public interface ILogicBall : IDisposable
     {
         public IDataBall Ball { get; }
-        public void Update(float deltaTime);
         public bool CollidesWith(ILogicBall other);
         public event EventHandler<BallEventArgs>? PositionChanged;
+        void Start();
+        void Stop();
     }
 }

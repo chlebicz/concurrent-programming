@@ -1,6 +1,6 @@
-namespace Logic
+namespace Data
 {
-    public class BallStateDto
+    public class DataBallStateDto
     {
         public DateTime Timestamp { get; set; }
         public int Id { get; set; }
@@ -9,14 +9,14 @@ namespace Logic
         public float Vx { get; set; }
         public float Vy { get; set; }
 
-        public BallStateDto(ILogicBall ball)
+        public DataBallStateDto(IDataBall ball)
         {
             Timestamp = DateTime.Now;
-            Id = ball.Ball.Number;
-            X = ball.Ball.X;
-            Y = ball.Ball.Y;
-            Vx = ball.Ball.DirectionX * ball.Ball.Velocity;
-            Vy = ball.Ball.DirectionY * ball.Ball.Velocity;
+            Id = ball.Number;
+            X = ball.X;
+            Y = ball.Y;
+            Vx = ball.DirectionX * ball.Velocity;
+            Vy = ball.DirectionY * ball.Velocity;
         }
     }
 }

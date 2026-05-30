@@ -1,21 +1,9 @@
 using Data;
 using System.Diagnostics;
+using System.Text.Json;
 
 namespace Logic
 {
-    internal class BallWithTimer
-    {
-        public ILogicBall Ball { get; }
-        public Timer Timer { get; set; }
-        public Stopwatch Stopwatch { get; }
-
-        public BallWithTimer(ILogicBall ball)
-        {
-            Ball = ball;
-            Stopwatch = new Stopwatch();
-        }
-    }
-
     public class LogicPool : ILogicPool
     {
         public IDataPool Pool { get; }
@@ -24,8 +12,7 @@ namespace Logic
         private readonly IBallFactory _ballFactory;
         public int BallRadius { get; } = 15;
 
-        private List<BallWithTimer> _ballTimers = new();
-        private DiagnosticLogger? _logger;
+        private IDataLogger? _logger;
 
         public LogicPool(IDataPool pool, IBallFactory ballFactory)
         {
@@ -53,7 +40,7 @@ namespace Logic
             for (int i = 0; i < balls; i++)
             {
                 var dataBall = _ballFactory.CreateBall(i, 0, 0, BallRadius);
-                LogicBall logicBall = new(dataBall);
+                LogicBall logicBall = new(dataBall, OnBallMove);
 
                 Stopwatch stopwatch = Stopwatch.StartNew();
                 while (true)
@@ -79,43 +66,55 @@ namespace Logic
             }
         }
 
+        private void OnBallMove(ILogicBall ball)
+        {
+            CheckWallCollision(ball);
+            CheckBallCollision(ball);
+            
+            if (_logger != null)
+            {
+                var dto = new DataBallStateDto(ball.Ball);
+                string json = JsonSerializer.Serialize(dto);
+                _logger.Log(json);
+            }
+        }
+
         public void StartMovement()
         {
             StopMovement();
 
-            _logger = new DiagnosticLogger(new DataLogger("log.json"));
+            _logger = new DataLogger("log.json");
 
             foreach (var ball in _balls)
             {
-                var ballWithTimer = new BallWithTimer(ball);
-                ballWithTimer.Stopwatch.Start();
-                Timer ballTimer = new Timer(MoveBallCallback, ballWithTimer, 0, 16);
-                ballWithTimer.Timer = ballTimer;
-                _ballTimers.Add(ballWithTimer);
+                ball.Start();
             }
         }
 
         public void CheckWallCollision(ILogicBall ball)
         {
-            if (ball.Ball.X <= BallRadius && ball.Ball.DirectionX < 0)
+            lock (ball)
             {
-                ball.Ball.X = BallRadius;
-                ball.Ball.DirectionX *= -1;
-            }
-            if (ball.Ball.X >= Pool.XDim - BallRadius && ball.Ball.DirectionX > 0)
-            {
-                ball.Ball.X = Pool.XDim - BallRadius;
-                ball.Ball.DirectionX *= -1;
-            }
-            if (ball.Ball.Y <= BallRadius && ball.Ball.DirectionY < 0)
-            {
-                ball.Ball.Y = BallRadius;
-                ball.Ball.DirectionY *= -1;
-            }
-            if (ball.Ball.Y >= Pool.YDim - BallRadius && ball.Ball.DirectionY > 0)
-            {
-                ball.Ball.Y = Pool.YDim - BallRadius;
-                ball.Ball.DirectionY *= -1;
+                if (ball.Ball.X <= BallRadius && ball.Ball.DirectionX < 0)
+                {
+                    ball.Ball.X = BallRadius;
+                    ball.Ball.DirectionX *= -1;
+                }
+                if (ball.Ball.X >= Pool.XDim - BallRadius && ball.Ball.DirectionX > 0)
+                {
+                    ball.Ball.X = Pool.XDim - BallRadius;
+                    ball.Ball.DirectionX *= -1;
+                }
+                if (ball.Ball.Y <= BallRadius && ball.Ball.DirectionY < 0)
+                {
+                    ball.Ball.Y = BallRadius;
+                    ball.Ball.DirectionY *= -1;
+                }
+                if (ball.Ball.Y >= Pool.YDim - BallRadius && ball.Ball.DirectionY > 0)
+                {
+                    ball.Ball.Y = Pool.YDim - BallRadius;
+                    ball.Ball.DirectionY *= -1;
+                }
             }
         }
 
@@ -211,38 +210,22 @@ namespace Logic
             }
         }
 
-        private void MoveBallCallback(object? state)
-        {
-            if (state is not BallWithTimer ballWithTimer) return;
-
-            float deltaTime = (float)ballWithTimer.Stopwatch.Elapsed.TotalSeconds;
-            ballWithTimer.Stopwatch.Restart();
-
-            lock (ballWithTimer.Ball)
-            {
-                ballWithTimer.Ball.Update(deltaTime);
-                CheckWallCollision(ballWithTimer.Ball);
-            }
-            CheckBallCollision(ballWithTimer.Ball);
-            
-            // Log state after update
-            _logger?.LogBallState(ballWithTimer.Ball);
-        }
-
         public void ClearBalls()
         {
             StopMovement();
+            foreach (var ball in _balls)
+            {
+                ball.Dispose();
+            }
             _balls.Clear();
         }
 
         public void StopMovement()
         {
-            foreach (var bwt in _ballTimers)
+            foreach (var ball in _balls)
             {
-                bwt.Timer.Dispose();
-                bwt.Stopwatch.Stop();
+                ball.Stop();
             }
-            _ballTimers.Clear();
 
             _logger?.Dispose();
             _logger = null;
@@ -251,6 +234,10 @@ namespace Logic
         public void Dispose()
         {
             StopMovement();
+            foreach (var ball in _balls)
+            {
+                ball.Dispose();
+            }
         }
     }
 }

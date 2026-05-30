@@ -18,16 +18,23 @@ namespace LogicTest
         }
 
         [Fact]
-        public void UpdateBallTest()
+        public async Task StartStopBallTest()
         {
             IBallFactory factory = new FakeBallFactory();
             IDataBall dataBall = factory.CreateBall(5, 5, 5, 5);
+            dataBall.Velocity = 100f;
             LogicBall ball = new LogicBall(dataBall);
-            ball.Ball.DirectionX = 1;
-            ball.Ball.DirectionY = 0;
-            ball.Ball.Velocity = 1f;
-            ball.Update(1.0f);
-            Assert.Equal(6, ball.Ball.X);
+            
+            float startX = ball.Ball.X;
+            ball.Start();
+            
+            // Wait for some movement
+            await Task.Delay(50);
+            
+            ball.Stop();
+            float endX = ball.Ball.X;
+            
+            Assert.NotEqual(startX, endX);
         }
     }
 }
